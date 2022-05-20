@@ -1,4 +1,8 @@
-# Finding the error in your Comparator’s compare method aka “Comparison method violates its general contract!”
+# “Comparison method violates its general contract!”
+
+Here a couple of ways to find the origin of this issue.
+
+## 1. Finding the error in your Comparator’s compare method aka “Comparison method violates its general contract!”
 
 If you google the term ‘Comparison method violates its general contract’, you will find some articles on [stackoverflow](http://stackoverflow.com/questions/11441666/java-error-comparison-method-violates-its-general-contract) that sort of help. But these didn’t help me because like Forrest Gump, “I’m not a smart man but I know what love is”.
 
@@ -27,3 +31,16 @@ Here is what you can do to solve this issue on a production system:
 3. go to step 1
 
 Since order matters, we have to select every 3 item combination from this list. So that is what the following bit of code does. It helps to identify the 3 items that are breaking the contact of transitivity. Then using just those 3 items, you can debug your comparator and finally modify it to appease the Java Gods. Here is the code to find those 3 are in the class `TestComparatorForTransitivity`
+
+## 2. Multithreading issues
+
+So you have checked your comparator and you believe that it is transitive but
+you are still getting this exception?
+
+Another possible cause for this can be that you have several threads sorting
+your list at the same time as illustrated in the `ContractViolator` class. 
+
+This code will generate a `java.lang.IllegalArgumentException: Comparison method violates its general contract!` along some other `java.util.ConcurrentModificationException`.
+
+To solve this, you then have to make sure that only one thread accesses your 
+list at one time, either by synchronizing or working with copies.
